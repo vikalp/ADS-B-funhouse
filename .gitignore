@@ -3,3 +3,7 @@ bingconfig.py
 *.db
 *.pyc
 logocolors.json
+*.pem
+*.key
+*.cert
+*.crt

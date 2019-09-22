@@ -274,6 +274,10 @@ def main():
   parser.add_argument('-pdb', '--planedb', dest='pdb_host', help="Plane database host")
   parser.add_argument('-v', '--verbose',  action="store_true", help="Verbose output")
   parser.add_argument('-l', '--logger', dest='log_host', help="Remote log host")
+  parser.add_argument('-ca', '--ca-cert', help="path to CA Certificate roof file", default=None)
+  parser.add_argument('-pe', '--pem-file', help="path to Pem file", default=None)
+  parser.add_argument('-k', '--key', help="path to secret key file", default=None)
+  parser.add_argument('-aws', '--aws-iot', help="path to secret key file", default=0)
 
   args = parser.parse_args()
 
@@ -285,7 +289,13 @@ def main():
   if args.pdb_host:
     planedb.init(args.pdb_host)
 
-  bridge = mqtt_wrapper.bridge(host = args.mqtt_host, port = args.mqtt_port, client_id = "adsbclient-%d" % (random.randint(0, 65535)), user_id = args.mqtt_user, password = args.mqtt_password)
+  if args.ca_cert and args.pem_file and args.key:
+    certificates = {
+      'ca': args.ca_cert,
+      'pem': args.pem_file,
+      'key': args.key
+    }
+  bridge = mqtt_wrapper.bridge(host = args.mqtt_host, port = args.mqtt_port, client_id = "adsbclient-%d" % (random.randint(0, 65535)), user_id = args.mqtt_user, password = args.mqtt_password, certificates=certificates, AWS_IoT=args.aws_iot)
   thread = threading.Thread(target = mqttThread, args = (bridge,))
   thread.setDaemon(True)
   thread.start()

@@ -2,10 +2,11 @@
 import paho.mqtt.client as mqtt
 import time
 import traceback
+import ssl
 
 class bridge:
 
-    def __init__(self, mqtt_topic = None, client_id = "bridge", user_id = None, password = None, host = "127.0.0.1", port = 1883, keepalive = 60):
+    def __init__(self, mqtt_topic = None, client_id = "bridge", user_id = None, password = None, host = "127.0.0.1", port = 8883, keepalive = 60, certificates={}, AWS_IoT=0):
         self.mqtt_topic = mqtt_topic
         self.client_id = client_id
         self.user_id = user_id
@@ -18,9 +19,13 @@ class bridge:
         self.rc = 1
         self.timeout = 0
 
-        self.client = mqtt.Client(self.client_id, clean_session = True)
+        self.client = mqtt.Client(self.client_id, clean_session = True, userdata=None, protocol=mqtt.MQTTv311, transport="tcp")
         if self.user_id and self.password:
             self.client.username_pw_set(self.user_id, self.password)
+        elif certificates:
+            self.port = 443
+            ssl_context = self.__class__.ssl_alpn(certificates, AWS_IoT)
+            self.client.tls_set_context(context=ssl_context)
 
         self.client.on_connect = self.on_connect
         self.client.on_disconnect = self.on_disconnect
@@ -31,10 +36,30 @@ class bridge:
 
         self.connect()
 
+    @staticmethod
+    def ssl_alpn(certificates, AWS_IoT):
+        try:
+            ssl_context = ssl.create_default_context()
+            if(AWS_IoT):
+	        IoT_protocol_name = "x-amzn-mqtt-ca"
+                ssl_context.set_alpn_protocols([IoT_protocol_name])
+            ca = certificates['ca']
+            cert = certificates['pem']
+            private = certificates['key']
+            #debug print opnessl version
+            ssl_context.load_verify_locations(cafile=ca)
+            ssl_context.load_cert_chain(certfile=cert, keyfile=private)
+
+            return  ssl_context
+        except Exception as e:
+            print("exception ssl_alpn()")
+            raise e
+
     def connect(self):
         while self.rc != 0:
             try:
                 self.rc = self.client.connect(self.host, self.port, self.keepalive)
+                self.client.loop_start()
             except Exception as e:
                 print("connection failed")
             time.sleep(2)
