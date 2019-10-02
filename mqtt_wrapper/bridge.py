@@ -41,7 +41,7 @@ class bridge:
         try:
             ssl_context = ssl.create_default_context()
             if(AWS_IoT):
-	        IoT_protocol_name = "x-amzn-mqtt-ca"
+                IoT_protocol_name = "x-amzn-mqtt-ca"
                 ssl_context.set_alpn_protocols([IoT_protocol_name])
             ca = certificates['ca']
             cert = certificates['pem']

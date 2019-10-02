@@ -1,0 +1,15 @@
+version: '3.0'
+services:
+  airscan:
+    image: airscan_test
+    ports:
+      - 30001:30001
+      - 30002:30002
+    expose:
+      - 30001
+      - 30002
+    volumes:
+      - .:/usr/local/goibibo/source/AirScan/adsbscript
+    stdin_open: true
+    tty: true
+    command: ["/usr/local/goibibo/source/AirScan/adsbscript/entrypoint.sh"]
