@@ -1,1 +1,0 @@
-python /usr/local/goibibo/source/airscan/adsbscript/adsbclient.py -H localhost --mqtt-host a202b7iw9uxlrl-ats.iot.ap-south-1.amazonaws.com -r AirScan --ca-cert /usr/local/goibibo/source/airscan/conf/root-CA.crt --pem-file /usr/local/goibibo/source/airscan/conf/AirScan.cert.pem --key /usr/local/goibibo/source/airscan/conf/AirScan.private.key -aws 1 -v
