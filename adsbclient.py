@@ -37,6 +37,7 @@ import errno
 import sbs1
 import planedb
 import mqtt_wrapper
+from os import getenv
 
 log = logging.getLogger(__name__)
 
@@ -81,6 +82,7 @@ class Observation(object):
     self.lat = sbs1Message.lat
     self.lon = sbs1Message.lon
     self.verticalRate = sbs1Message.verticalRate
+    self.device = getenv('RESIN_DEVICE_NAME_AT_INIT')
     self.operator = None
     self.registration = None
     self.type = None
