@@ -8,6 +8,7 @@ project by John Wiseman (github.com/wiseman/node-sbs1)
 
 import sys
 try:
+  import datetime
   import dateutil.parser
 except ImportError:
   print("dateutil module not installed, try 'sudo pip install python-dateutil'")
@@ -73,8 +74,13 @@ class SBS1Message (object):
     self.aircraftID = self.parseString(parts, 3)
     self.icao24 = self.parseString(parts, 4)
     self.flightID = self.parseString(parts, 5)
-    self.generatedDate = self.parseDateTime(parts, 6, 7)
-    self.loggedDate = self.parseDateTime(parts, 8, 9)
+    try:
+      self.generatedDate = self.parseDateTime(parts, 6, 7)
+      self.loggedDate = self.parseDateTime(parts, 8, 9)
+    except Exception:
+      print("Date Exception:" + str(parts))
+      self.generatedDate = datetime.datetime.now()
+      self.loggedDate = datetime.datetime.now()
     self.callsign = self.parseString(parts, 10)
     if self.callsign:
       self.callsign = self.callsign.strip()
