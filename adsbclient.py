@@ -73,6 +73,10 @@ class DictDiffer(object):
 class Observation(object):
   def __init__(self, sbs1Message):
     log.debug("%s appeared" % sbs1Message.icao24)
+    self.messageType = sbs1Message.messageType
+    self.transmissionType = sbs1Message.transmissionType
+    self.sessionID = sbs1Message.sessionID
+    self.aircraftID = sbs1Message.aircraftID
     self.icao24 = sbs1Message.icao24
     self.loggedDate = sbs1Message.loggedDate
     self.callsign = sbs1Message.callsign
